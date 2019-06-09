@@ -1,0 +1,18 @@
+post_install() {
+
+    # If abisplash hooks not present, add this
+    if [ "$(grep 'abigsplash' /etc/mkinitcpio.conf)" = "" ]; then
+        sed -i 's|HOOKS="|HOOKS="abigsplash |g' /etc/mkinitcpio.conf
+    fi
+
+    # If /boot is btrfs compressed in lzo, use compression lzop
+    if [ "$(btrfs property get /boot compression | grep lzo)" != "" ]; then
+        sed -i 's|#COMPRESSION="lzop"|COMPRESSION="lzop"|g' /etc/mkinitcpio.conf
+    fi
+}
+
+
+
+pre_remove() {
+    sed -i 's|HOOKS="abigsplash |HOOKS="|g' /etc/mkinitcpio.conf
+} 
